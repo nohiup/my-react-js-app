@@ -1,0 +1,57 @@
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.background-primary {
+  background-color: var(--color-primary);
+}
+
+.background-primary-hover:hover {
+  background-color: var(--hover-primary);
+}
+
+.selected-primary {
+  background-color: var(--selected-primary);
+}
+
+.text-normal {
+  color: var(--normal-text);
+}
+
+.text-title {
+  color: var(--bold-text);
+}
+
+.app-background {
+  background-color: var(--app-background);
+}
+
+:root {
+  --color-primary: #06b6d4;
+  --selected-primary: #B2EBF2;
+  --hover-primary: #E0F7FA;
+  --normal-text: #475569;
+  --bold-text: #1e293b;
+  --app-background: white;
+}
+
+/* Dark mode */
+.dark {
+  --color-primary: #22d3ee;
+  /* vẫn nổi bật trên dark bg */
+
+  --selected-primary: #164e63;
+  /* nhẹ nhàng, không chói */
+  --hover-primary: #0f172a;
+  /* hover trên dark mode */
+  --normal-text: #cbd5e1;
+  /* chữ thông thường nhẹ nhàng */
+  --bold-text: #f8fafc;
+  /* chữ tiêu đề sáng */
+  --app-background: #0f172a;
+  /* background tổng tối */
+}
