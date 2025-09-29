@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
         <span>✓</span>
         <span>{utcTime}</span>
         <span className="flex items-center space-x-1.5">
-          <span className="w-2 h-2 rounded-full bg-green-500"></span>
+          <span className="w-2 h-2 rounded-full success-background"></span>
           <span>READY</span>
         </span>
       </div>

@@ -1,4 +1,4 @@
-import type { Task, User } from './types';
+import type { MessagesByConversation, Task, User } from './types';
 import { TaskStatus, TaskPriority } from './types';
 
 export const users: User[] = [
@@ -208,6 +208,26 @@ export const tasks: Task[] = [
   },
 ];
 
+// --- Dummy chat data ---
+export const initialConversations = [
+  { id: 1, type: "channel", name: "payment-team", lastMessage: "OAuth implementati...", unread: 3 },
+  { id: 2, type: "channel", name: "payment-backend", lastMessage: "API rate limiting ...", unread: 0 },
+  { id: 3, type: "dm", name: "John Doe", lastMessage: "I'll handle the re...", unread: 0 },
+  { id: 4, type: "dm", name: "Sarah Johnson", lastMessage: "Review completed", unread: 0 },
+];
+
+export const initialMessages: MessagesByConversation = {
+  1: [
+    { id: 1, author: "Sarah Johnson", initials: "SJ", text: "The OAuth flow looks good. Just make sure we handle token expiration gracefully.", timestamp: "2:34 PM", type: "received" },
+    { id: 2, author: "Mike Wilson", initials: "MW", text: "Should we implement PKCE for additional security?", timestamp: "2:36 PM", type: "received" },
+    { id: 3, author: "John Doe", initials: "JD", text: "Good catch! I'll add PKCE support.", timestamp: "2:38 PM", type: "sent" },
+    { id: 4, author: "Sarah Johnson", initials: "SJ", text: "Also, make sure to document the token refresh process clearly.", timestamp: "2:40 PM", type: "received" },
+    { id: 5, author: "John Doe", initials: "JD", text: "Will do. I should have the implementation ready by EOD.", timestamp: "2:42 PM", type: "sent" },
+  ],
+  2: [{ id: 1, author: "Jane Smith", initials: "JS", text: "We need to discuss the new API rate limiting strategy.", timestamp: "10:00 AM", type: "received" }],
+  3: [{ id: 1, author: "John Doe", initials: "JD", text: "I'll handle the request for the new feature.", timestamp: "Yesterday", type: "sent" }],
+  4: [{ id: 1, author: "Sarah Johnson", initials: "SJ", text: "The review is completed. Everything looks good!", timestamp: "Yesterday", type: "received" }],
+};
 
 /* eslint-disable max-len */
 export const ICONS = {
@@ -245,5 +265,21 @@ export const ICONS = {
   helpCircle: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>,
   fileText: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>,
   mail: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>,
+  chatIcon:
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>,
+  chevronDownIcon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </svg>,
+
+  searchIcon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>,
+
+  sendIcon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+  </svg>,
 };
 /* eslint-enable max-len */

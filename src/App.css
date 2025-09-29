@@ -34,6 +34,10 @@
   color: var(--app-background);
 }
 
+.success-background {
+  background-color: var(--success);
+}
+
 :root {
   --color-primary: #06b6d4;
   --selected-primary: #B2EBF2;
@@ -44,6 +48,10 @@
   --scrollbar-track: #f7f8fa;
   --scrollbar-thumb: #06b6d4;
   --scrollbar-thumb-hover: #E0F7FA;
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
 
 }
 
@@ -65,6 +73,10 @@
   --scrollbar-track: #0f172a;
   --scrollbar-thumb: #22d3ee;
   --scrollbar-thumb-hover: b7c1d6;
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
 }
 
 * {

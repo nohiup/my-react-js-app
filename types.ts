@@ -54,3 +54,16 @@ export interface Task {
     end: string;
   };
 }
+
+export type MessageType = {
+  id: number;
+  author: string;
+  initials: string;
+  text: string;
+  timestamp: string;
+  type: "sent" | "received";
+};
+
+export type MessagesByConversation = {
+  [key: number]: MessageType[];
+};
