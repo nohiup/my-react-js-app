@@ -12,7 +12,6 @@ export const useLeftSidebar = ({ initialTasks = [], initialSelectedTaskId }: Use
 
   const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
   const selectTask = (id: string) => setSelectedTaskId(id);
-  const isFirstRun = true;
 
   const nowTasks = initialTasks.filter(t => ['BUG-007', 'FEA-112', 'DEV-404'].includes(t.id));
   const pinnedTasks = initialTasks.filter(t => ['PIN-001', 'PIN-002'].includes(t.id));
