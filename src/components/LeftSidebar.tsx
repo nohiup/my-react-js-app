@@ -5,6 +5,7 @@ import NavBottomIcon from "./items/NavBottomIcons";
 import { ICONS, DIMENS } from "../../constants";
 import TaskGroup from "./containers/TaskGroup";
 import { motion } from "framer-motion";
+import { Stack } from "./ui/stack";
 
 interface LeftSidebarUIProps {
     isSidebarOpen: boolean;
@@ -38,39 +39,41 @@ const LeftSidebarUI: React.FC<LeftSidebarUIProps> = ({
             style={{ flexShrink: 0 }}
         >
             {/* Khi width = 0, nội dung vẫn render nhưng bị clip lại */}
-            <div className="w-11 flex flex-col items-center app-background border-r border-primary">
+            <Stack align="center" className="w-11 app-background border-r border-primary">
                 <div className="w-11 h-11 p-2 border-b border-primary">
                     <div className="text-primary rounded flex items-center justify-center font-bold text-normal border border-primary">
                         P
                     </div>
                 </div>
 
-                <nav className="flex flex-col items-center space-y-3 mt-3">
-                    <NavIcon icon={ICONS.home} active />
-                    <NavIcon icon={ICONS.building} />
-                    <NavIcon icon={ICONS.shield} />
-                    <NavIcon icon={ICONS.sliders} />
+                <nav>
+                    <Stack align="center" gap="gap-3" margin="mt-3">
+                        <NavIcon icon={ICONS.home} active />
+                        <NavIcon icon={ICONS.building} />
+                        <NavIcon icon={ICONS.shield} />
+                        <NavIcon icon={ICONS.sliders} />
+                    </Stack>
                 </nav>
 
                 <div className="flex-grow"></div>
 
-                <div className="flex flex-col items-center space-y-3">
+                <Stack align="center" gap="gap-3">
                     <NavBottomIcon icon={ICONS.command} />
                     <NavBottomIcon icon={ICONS.palette} onClick={onPalleteClick} />
                     <NavBottomIcon icon={ICONS.helpCircle} />
                     <NavBottomIcon icon={ICONS.user} />
-                </div>
-            </div>
+                </Stack>
+            </Stack>
 
-            <div className="w-64 flex flex-col app-background">
-                <div className={`${DIMENS.headerHeight} flex items-center justify-between border-b border-primary px-3`}>
+            <Stack className="w-64 app-background">
+                <Stack row align="center" justify="justify-between" padding="px-3" className={`${DIMENS.headerHeight} border-b border-primary`}>
                     <h3 className="font-bold text-lg text-primary">PM Hub</h3>
                     <button
                         onClick={toggleSidebar}
                         className="w-8 h-8 flex items-center justify-center app-background rounded-md text-title background-primary-hover">
                         {React.cloneElement(ICONS.sidebar, { className: "w-4 h-4" })}
                     </button>
-                </div>
+                </Stack>
 
                 <div className="m-3 border-b app-background">
                     <div className="relative">
@@ -85,12 +88,12 @@ const LeftSidebarUI: React.FC<LeftSidebarUIProps> = ({
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                <Stack padding="pr-1" className="flex-1 overflow-y-auto">
                     <TaskGroup title="Now" tasks={nowTasks} onTaskSelect={onTaskSelect} selectedTaskId={selectedTaskId} />
                     <TaskGroup title="Pinned" tasks={pinnedTasks} onTaskSelect={onTaskSelect} selectedTaskId={selectedTaskId} />
                     <TaskGroup title="Inbox" tasks={inboxTasks} onTaskSelect={onTaskSelect} selectedTaskId={selectedTaskId} badgeCount={3} />
-                </div>
-            </div>
+                </Stack>
+            </Stack>
         </motion.aside>
     );
 };

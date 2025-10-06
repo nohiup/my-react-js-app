@@ -2,6 +2,8 @@ import React from 'react';
 import type { Task, User, ChecklistItem } from '../../types';
 import { ICONS } from '../../constants';
 import { TaskStatus, TaskPriority } from '../../types';
+import { Stack } from './ui/stack';
+import { cn } from '@/lib/utils';
 
 interface TaskDetailsProps {
     task: Task;
@@ -47,29 +49,29 @@ const InfoItem: React.FC<{ label: string; value: React.ReactNode; }> = ({ label,
 );
 
 const ChecklistItemComponent: React.FC<{ item: ChecklistItem; onToggle: (id: string) => void; }> = ({ item, onToggle }) => (
-    <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => onToggle(item.id)}>
-        <span className={`w-5 h-5 ${item.completed ? 'text-green-500' : 'text-slate-400 group-hover:text-slate-600'}`}>
+    <Stack row align="center" gap="gap-3" className="cursor-pointer group" onClick={() => onToggle(item.id)}>
+        <span className={cn("w-5 h-5", item.completed ? "text-green-500" : "text-slate-400 group-hover:text-slate-600")}>
             {item.completed ? ICONS.checkCircle : ICONS.circle}
         </span>
-        <span className={`flex-1 text-sm ${item.completed ? 'text-normal line-through' : 'text-title'}`}>
+        <span className={cn("flex-1 text-sm", item.completed ? 'text-normal line-through' : 'text-title')}>
             {item.text}
         </span>
-    </div>
+    </Stack>
 );
 
 const CommentComponent: React.FC<{ user: User | undefined; text: string; timestamp: string; }> = ({ user, text, timestamp }) => (
-    <div className="flex items-start space-x-3">
+    <Stack row gap="gap-3" align="start">
         <div className="w-8 h-8 rounded-full app-background flex items-center justify-center font-bold text-slate-500 text-sm flex-shrink-0">
             {user?.avatar}
         </div>
         <div className="flex-1">
-            <div className="flex items-center space-x-2">
+            <Stack row align="center">
                 <span className="font-semibold text-sm">{user?.name}</span>
                 <span className="text-xs text-normal">{timestamp}</span>
-            </div>
+            </Stack>
             <p className="text-sm text-normal mt-1">{text}</p>
         </div>
-    </div>
+    </Stack>
 );
 
 const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) => {
@@ -85,22 +87,22 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) 
     };
 
     const assigneeValue = (
-        <div className="flex items-center space-x-2">
+        <Stack row align="center">
             <div className="w-6 h-6 rounded-full app-background flex items-center justify-center font-bold text-normal text-xs">
                 {assignee?.avatar}
             </div>
             <span className="font-medium">{assignee?.name || 'Unassigned'}</span>
-        </div>
+        </Stack>
     );
 
     return (
         <div className="max-w-4xl mx-auto">
             <header className="mb-6">
-                <div className="flex items-center space-x-3 mb-2">
+                <Stack row gap="gap-3" align="center" margin="mb-2">
                     <span className="text-sm font-medium text-normal">{task.id}</span>
                     <PriorityTag priority={task.priority} />
                     <StatusTag status={task.status} />
-                </div>
+                </Stack>
                 <h1 className="text-3xl font-bold text-title">{task.title}</h1>
                 <p className="text-normal mt-1">{task.shortDescription}</p>
             </header>
@@ -113,10 +115,10 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) 
             </section>
 
             <section className="my-6">
-                <div className="flex justify-between items-center mb-2">
+                <Stack row justify="justify-between" margin="mb-2" align="center">
                     <label className="text-sm font-semibold text-title">Progress</label>
                     <span className="text-sm text-normal">{completedChecklistItems} of {task.checklist.length} completed</span>
-                </div>
+                </Stack>
                 <div className="w-full app-background rounded-full h-2">
                     <div className="background-primary h-2 rounded-full" style={{ width: `${progressPercentage}%` }}></div>
                 </div>
@@ -164,7 +166,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) 
                         ))}
                     </div>
                     <div className="mt-6 pt-6 border-t border-primary">
-                        <div className="flex items-start space-x-3">
+                        <Stack row gap="gap-3" align="center">
                             <div className="w-8 h-8 rounded-full app-background flex items-center justify-center font-bold text-normal text-sm flex-shrink-0">
                                 JD
                             </div>
@@ -176,21 +178,21 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) 
                                         rows={3}
                                     ></textarea>
                                     <div className="flex justify-between items-center p-2 border-t border-primary app-background">
-                                        <div className="flex items-center space-x-2">
+                                        <Stack row align="center">
                                             <button className="p-1.5 text-normal background-primary-hover rounded-md">
                                                 {/* Fix: Removed unnecessary and problematic `as React.ReactElement` cast. */}
                                                 {React.cloneElement(ICONS.paperclip, { className: "w-4 h-4" })}
                                             </button>
-                                        </div>
+                                        </Stack>
                                         <button className="px-4 py-1.5 background-primary text-contrast text-sm font-semibold rounded-md background-primary-hover disabled:opacity-50 cursor-not-allowed">Comment</button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </Stack>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

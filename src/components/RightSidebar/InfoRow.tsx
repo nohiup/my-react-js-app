@@ -1,4 +1,5 @@
 import React from "react";
+import { Stack } from "../ui/stack";
 
 const InfoRow: React.FC<{
   icon: React.ReactElement<{
@@ -8,14 +9,15 @@ const InfoRow: React.FC<{
   children:
   React.ReactNode;
 }> = ({ icon, label, children }) => (
-  <div>
-    <div className="flex items-center space-x-2 text-normal">
+  <Stack gap="gap-0">
+    <Stack row align="center" className="space-x-2 text-normal">
       <span className="w-4 h-4 flex items-center justify-center">
         {React.cloneElement(icon, { className: "w-4 h-4 shrink-0" })}
       </span>
       <span className="text-xs font-medium">{label}</span>
-    </div>
+    </Stack>
     <div className="pl-6 pt-1 text-sm text-title">{children}</div>
-  </div>);
+  </Stack>
+);
 
 export default InfoRow;

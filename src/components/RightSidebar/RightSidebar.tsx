@@ -7,6 +7,7 @@ import InfoRow from "./InfoRow";
 import Tag from "./Tag";
 import type { Task } from "../../../types";
 import type { RightSidebarView } from "../../hooks/useRightSidebar";
+import { Stack } from "../ui/stack";
 
 interface RightSidebarProps {
   task: Task;
@@ -47,15 +48,15 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ task, view, isOpen }) => {
       className="app-background border-l border-primary flex flex-col overflow-hidden text-normal"
       style={{ flexShrink: 0 }}
     >
-      <div className={`${DIMENS.headerHeight} flex items-center justify-between border-b border-primary px-4`}>
-        <div className="flex items-center space-x-2 text-title">
+      <Stack row align="center" justify="justify-between" padding="px-4" className={`${DIMENS.headerHeight} border-b border-primary`}>
+        <Stack row gap="gap-2" align="center" className="text-title">
           <span className="w-5 h-5">{view === "message" ? ICONS.messageSquare : ICONS.info}</span>
           <h2 className="font-semibold">{view === "message" ? "Messages" : "Details"}</h2>
-        </div>
-      </div>
+        </Stack>
+      </Stack>
 
       {view === "info" ? (
-        <div className="space-y-5 px-4 pt-4">
+        <Stack gap="gap-5" padding="px-4 pt-4">
           <h3 className="font-semibold text-base text-title">{task.title}</h3>
           <p className="text-xs text-normal">Task • ID: {`tab:${task.id}.toLowerCase()`}</p>
           <div className="space-y-4">
@@ -63,15 +64,15 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ task, view, isOpen }) => {
             <InfoRow icon={ICONS.calendar} label="Timeline"><span>{task.timeline.start} → {task.timeline.end}</span></InfoRow>
             <InfoRow icon={ICONS.clock} label="Status"><span>{task.status}</span></InfoRow>
             <InfoRow icon={ICONS.tag} label="Tags">
-              <div className="flex flex-wrap gap-2 pt-1">
+              <Stack row padding="pt-1" className="flex-wrap">
                 {task.tags.map(tag => <Tag key={tag} text={tag} />)}
-              </div>
+              </Stack>
             </InfoRow>
             <InfoRow icon={ICONS.sprint} label="Sprint"><span>{task.sprint} • {task.sprintPoints} points</span></InfoRow>
           </div>
-        </div>
+        </Stack>
       ) : (
-        <div className="flex flex-1 overflow-hidden">
+        <Stack row className="flex flex-1 overflow-hidden">
           <Sidebar
             conversations={initialConversations}
             activeConversationId={activeConversationId}
@@ -84,7 +85,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ task, view, isOpen }) => {
             onMessageChange={setCurrentMessage}
             onSendMessage={handleSendMessage}
           />
-        </div>
+        </Stack>
       )}
     </motion.aside>
   );

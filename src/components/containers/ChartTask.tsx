@@ -14,6 +14,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import { Stack } from '../ui/stack';
 
 
 // --- Data ---
@@ -109,10 +110,10 @@ const Card = ({ title, children, className = '' }: { title?: string, children: R
 // Specific Chart and List Components
 const KpiCard = ({ item }: { item: typeof kpiData[0] }) => (
   <Card>
-    <div className="flex items-center text-normal mb-2 font-sans">
+    <Stack row align="center" margin="mb-2" className="text-normal mb-2 font-sans">
       <Icon name={item.icon} className="w-5 h-5 mr-2" />
       <span className="text-sm font-medium font-sans">{item.title}</span>
-    </div>
+    </Stack>
     <p className="text-3xl font-bold text-title font-sans">{item.value}</p>
     <p className="text-sm text-normal font-sans">{item.subValue}</p>
   </Card>
@@ -158,10 +159,10 @@ const TaskStatusChart = () => (
       </ResponsiveContainer>
       <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4 text-sm font-sans">
         {taskStatusData.map((item) => (
-          <div key={item.name} className="flex items-center">
+          <Stack row align="center" key={item.name}>
             <span className="w-2.5 h-2.5 rounded-full mr-2" style={{ backgroundColor: item.color }} aria-hidden="true"></span>
             <span className="text-title font-sans">{item.name}: {item.value}</span>
-          </div>
+          </Stack>
         ))}
       </div>
     </div>
@@ -207,7 +208,7 @@ const ChartTask = () => {
     <div className="min-h-screen app-background text-title font-sans">
       <header className="app-background shadow-sm">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
+          <Stack row align="center" justify="justify-between">
             <div>
               <h1 className="text-3xl font-bold text-title font-sans">Payment Gateway Integration</h1>
               <p className="text-normal mt-1 font-sans text-lg">
@@ -217,7 +218,7 @@ const ChartTask = () => {
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium background-primary text-contrast">
               Active
             </span>
-          </div>
+          </Stack>
         </div>
       </header>
 

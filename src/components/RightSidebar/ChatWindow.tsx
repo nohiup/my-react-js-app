@@ -1,6 +1,10 @@
 import { useEffect, useRef, type FC } from "react";
 import { ICONS, type initialConversations, type initialMessages } from "../../../constants";
 import Message from "./Message";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
+import { Stack } from "../ui/stack";
 
 interface ChatWindowProps {
   conversation: typeof initialConversations[0] | undefined;
@@ -36,7 +40,14 @@ const ChatWindow: FC<ChatWindowProps> = ({ conversation, messages, currentMessag
   };
 
   if (!conversation) {
-    return <main className="flex-grow flex flex-col app-background"><div className="flex items-center justify-center h-full text-normal text-xs">Select a conversation</div></main>;
+    return (
+      <main className="flex-grow flex flex-col app-background">
+        <Card className="flex-grow flex items-center justify-center">
+          <CardContent className="text-xs text-muted-foreground text-center">
+            Select a conversation
+          </CardContent>
+        </Card>
+      </main>)
   }
 
   return (
@@ -49,21 +60,20 @@ const ChatWindow: FC<ChatWindowProps> = ({ conversation, messages, currentMessag
         {messages.map((msg) => <Message key={msg.id} message={msg} />)}
       </div>
       <footer className="p-2 px-3 border-t border-primary app-background flex-shrink-0">
-        <div className="flex items-center app-background border border-primary rounded-lg">
-          <textarea
+        <Stack row align="center" className="app-background border border-primary rounded-lg">
+          <Textarea
             ref={textareaRef}
             placeholder="Type a message..."
             rows={1}
             value={currentMessage}
             onChange={handleTextareaInput}
             onKeyDown={handleKeyDown}
-            className="flex-grow border-none outline-none p-2 resize-none bg-transparent text-[0.75rem] max-h-20"
+            className="flex-grow resize-none bg-transparent text-[0.75rem] max-h-20"
           />
-          <button type="button" onClick={onSendMessage} disabled={!currentMessage.trim()}
-            className="border-none background-primary text-contrast w-8 h-8 m-1 rounded-md flex items-center justify-center background-primary-hover disabled:background-primary disabled:cursor-not-allowed">
+          <Button type="button" onClick={onSendMessage} disabled={!currentMessage.trim()} variant="default" size="icon">
             {ICONS.sendIcon}
-          </button>
-        </div>
+          </Button>
+        </Stack>
       </footer>
     </main>
   );

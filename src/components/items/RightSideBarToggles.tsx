@@ -1,6 +1,7 @@
 import React from "react";
 import { DIMENS, ICONS } from "../../../constants";
 import type { RightSidebarView } from "../../hooks/useRightSidebar";
+import { Stack } from "../ui/stack";
 
 interface RightSidebarTogglesProps {
   activeView: RightSidebarView;
@@ -13,23 +14,23 @@ const RightSidebarToggles: React.FC<RightSidebarTogglesProps> = ({ activeView, o
     `${buttonBase} ${activeView === view ? "selected-primary" : "app-background"}`;
 
   return (
-    <div className="flex flex-col border-l border-primary app-background">
-      <div className={`${DIMENS.headerHeight} flex items-center border-primary px-2`}>
+    <Stack className="border-l border-primary app-background">
+      <Stack align="center" row padding="px-2" className={`${DIMENS.headerHeight} border-primary`}>
         <button
           className={`${getButtonClass("info")}`}
           onClick={() => onToggle("info")}>
           {React.cloneElement(ICONS.info, { className: "w-4 h-4" })}
         </button>
-      </div>
-      <div className={`${DIMENS.headerHeight} flex items-center border-primary px-2`}>
+      </Stack>
+      <Stack row align="center" padding="px-2" className={`${DIMENS.headerHeight} border-primary`}>
         <button
           className={`${getButtonClass("message")}`}
           onClick={() => onToggle("message")}>
           {React.cloneElement(ICONS.messageSquare, { className: "w-4 h-4" })}
         </button>
-      </div>
+      </Stack>
 
-    </div>
+    </Stack>
   );
 };
 
