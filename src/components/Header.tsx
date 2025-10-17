@@ -3,14 +3,15 @@ import type { Task } from '../../types.ts';
 import { ICONS } from '../../constants.tsx';
 import { Stack } from './ui/stack.tsx';
 import { cn } from '@/lib/utils.ts';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '@/store/configureStore.ts';
+import { toggleSidebar } from '@/store/LeftSidebar/leftSidebarSlice.ts';
+import { closeTask } from '@/store/Header/headerTabSlice.ts';
+import { setSelectedTaskId } from '@/store/LeftSidebar/leftSidebarTaskSlice.ts';
 
 interface HeaderProps {
   activeTabs: Task[];
   selectedTabId?: string;
-  onTabSelect: (taskId: string) => void;
-  onTabClose: (taskId: string) => void;
-  isSidebarOpen: boolean;
-  onSidebarToggle: () => void; // mới
 }
 
 const Tab: React.FC<{ task: Task; isActive: boolean; onSelect: () => void; onClose: (e: React.MouseEvent) => void; }> = ({ task, isActive, onSelect, onClose }) => (
@@ -34,21 +35,18 @@ const Tab: React.FC<{ task: Task; isActive: boolean; onSelect: () => void; onClo
   </Stack>
 );
 
-const Header: React.FC<HeaderProps> = ({
-  activeTabs,
-  selectedTabId,
-  onTabSelect,
-  onTabClose,
-  isSidebarOpen,
-  onSidebarToggle,
-}) => {
+const Header: React.FC<HeaderProps> = () => {
+  const isLeftSidebarOpen = useSelector((state: RootState) => state.leftSidebar.isOpen)
+  const dispatch = useDispatch<AppDispatch>();
+  const selectedTabTaskId = useSelector((state: RootState) => state.leftSidebarTask.selectedTaskId)
+  const activeTabs = useSelector((state: RootState) => state.headerTab.openedTabTasks);
   return (
     <header className="flex-shrink-0 h-11 app-background border-b border-primary flex items-center justify-between px-2">
       <Stack row align="center" className="h-full flex-1 min-w-0">
         <Stack row align="center" gap="gap-1" className="flex-1 h-full overflow-x-auto">
-          {!isSidebarOpen && (
+          {!isLeftSidebarOpen && (
             <button
-              onClick={onSidebarToggle}
+              onClick={() => dispatch(toggleSidebar("none"))}
               className="w-8 h-8 flex items-center justify-center app-background rounded-md text-title background-primary-hover"
             >
               {React.cloneElement(ICONS.sidebar, { className: "w-4 h-4" })}
@@ -59,11 +57,21 @@ const Header: React.FC<HeaderProps> = ({
               <Tab
                 key={tab.id}
                 task={tab}
-                isActive={tab.id === selectedTabId}
-                onSelect={() => onTabSelect(tab.id)}
+                isActive={tab.id === selectedTabTaskId}
+                onSelect={() => dispatch(setSelectedTaskId(tab.id))}
                 onClose={(e) => {
                   e.stopPropagation();
-                  onTabClose(tab.id);
+                  dispatch(closeTask(tab.id));
+
+                  if (tab.id === selectedTabTaskId) {
+                    const index = activeTabs.findIndex(t => t.id === tab.id);
+                    const prevTab = activeTabs[index - 1] || activeTabs[index + 1] || null;
+                    if (prevTab) {
+                      dispatch(setSelectedTaskId(prevTab.id));
+                    } else {
+                      dispatch(setSelectedTaskId(null));
+                    }
+                  }
                 }}
               />
             </div>

@@ -1,6 +1,4 @@
-import React, { type JSX } from 'react';
 import {
-  ResponsiveContainer,
   LineChart,
   Line,
   BarChart,
@@ -11,11 +9,60 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
   Legend,
 } from 'recharts';
 import { Stack } from '../ui/stack';
+import { Card, CardContent, CardFooter, CardTitle } from '../ui/card';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '../ui/chart';
+import type { JSX } from 'react';
+import { H1 } from '../ui/headings';
+import classes from '@/lib/classes';
 
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "var(--chart-1)",
+  },
+  mobile: {
+    label: "Mobile",
+    color: "var(--chart-2)",
+  },
+} satisfies ChartConfig
+
+
+const pieChartConfig = {
+  visitors: {
+    label: "Visitors",
+  },
+  chrome: {
+    label: "Chrome",
+    color: "var(--chart-1)",
+  },
+  safari: {
+    label: "Safari",
+    color: "var(--chart-2)",
+  },
+  firefox: {
+    label: "Firefox",
+    color: "var(--chart-3)",
+  },
+  edge: {
+    label: "Edge",
+    color: "var(--chart-4)",
+  },
+  other: {
+    label: "Other",
+    color: "var(--chart-5)",
+  },
+} satisfies ChartConfig
+
+const lineChartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "var(--chart-1)",
+  },
+} satisfies ChartConfig
 
 // --- Data ---
 const kpiData = [
@@ -53,6 +100,14 @@ const taskStatusData = [
 ];
 
 const teamWorkloadData = [
+  { name: 'John', tasks: 8 },
+  { name: 'Sarah', tasks: 6 },
+  { name: 'Mike', tasks: 7 },
+  { name: 'Jane', tasks: 5 },
+  { name: 'John', tasks: 8 },
+  { name: 'Sarah', tasks: 6 },
+  { name: 'Mike', tasks: 7 },
+  { name: 'Jane', tasks: 5 },
   { name: 'John', tasks: 8 },
   { name: 'Sarah', tasks: 6 },
   { name: 'Mike', tasks: 7 },
@@ -97,107 +152,120 @@ const Icon = ({ name, className = 'w-6 h-6' }: { name: string, className?: strin
 
 };
 
-// Generic Card Component
-const Card = ({ title, children, className = '' }: { title?: string, children: React.ReactNode, className?: string }) => {
-  return (
-    <div className={`app-background border border-primary rounded-lg shadow-sm p-6 font-sans ${className}`}>
-      {title && <h2 className="text-lg font-bold text-title mb-4 font-sans">{title}</h2>}
-      {children}
-    </div>
-  );
-};
-
 // Specific Chart and List Components
 const KpiCard = ({ item }: { item: typeof kpiData[0] }) => (
   <Card>
-    <Stack row align="center" margin="mb-2" className="text-normal mb-2 font-sans">
-      <Icon name={item.icon} className="w-5 h-5 mr-2" />
+    <Stack row align="center" className="text-normal font-sans">
+      <Icon name={item.icon} className="w-5 h-5 mr-1" />
       <span className="text-sm font-medium font-sans">{item.title}</span>
     </Stack>
-    <p className="text-3xl font-bold text-title font-sans">{item.value}</p>
+    <H1>{item.value}</H1>
     <p className="text-sm text-normal font-sans">{item.subValue}</p>
   </Card>
 );
 
 const SprintBurndownChart = () => (
-  <Card title="Sprint Burndown" className="h-[320px] flex flex-col">
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={sprintBurndownData} margin={{ top: 5, right: 20, left: -10, bottom: 20 }}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-        <XAxis dataKey="name" tick={{ fill: '#64748b' }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fill: '#64748b' }} axisLine={false} tickLine={false} />
-        <Tooltip wrapperClassName="!rounded-lg !border-slate-200 !shadow-sm" />
-        <Legend verticalAlign="bottom" height={36} iconType="circle" />
-        <Line type="monotone" name="Actual" dataKey="actual" stroke="#f97316" strokeWidth={2} dot={{ r: 4, fill: '#f97316' }} />
-        <Line type="monotone" name="Planned" dataKey="planned" stroke="#a78bfa" strokeWidth={2} strokeDasharray="5 5" dot={false} />
-      </LineChart>
-    </ResponsiveContainer>
+  <Card className={classes.cardFullHeight}>
+    <CardTitle>Sprint Burndown</CardTitle>
+    <CardContent>
+      <ChartContainer config={chartConfig}>
+        <LineChart accessibilityLayer data={sprintBurndownData} margin={{ top: 5, right: 20, left: -10 }}>
+          <CartesianGrid vertical={false} />
+          <XAxis dataKey="name" tick={{ fill: '#64748b' }} axisLine={false} tickLine={false} className="pt-2" />
+          <YAxis tick={{ fill: '#64748b' }} axisLine={false} tickLine={false} />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />}></ChartTooltip>
+          <Legend verticalAlign="bottom" height={36} iconType="circle" />
+          <Line type="monotone" name="Actual" dataKey="actual" stroke="#f97316" strokeWidth={2} dot={{ r: 4, fill: '#f97316' }} />
+          <Line type="monotone" name="Planned" dataKey="planned" stroke="var(--color-primary)" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+        </LineChart>
+      </ChartContainer>
+    </CardContent>
   </Card>
 );
 
 const TaskStatusChart = () => (
-  <Card title="Task Status" className="h-[320px] flex flex-col">
-    <div className="flex flex-col items-center">
-      <ResponsiveContainer width="100%" height={160}>
+  <Card className={classes.cardFullHeight}>
+    <CardTitle>Task Status</CardTitle>
+    <CardContent>
+      <ChartContainer config={pieChartConfig} className="mx-auto">
         <PieChart>
+          <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />}>
+          </ChartTooltip>
           <Pie
             data={taskStatusData}
             cx="50%"
             cy="50%"
-            innerRadius={50}
-            outerRadius={70}
+            innerRadius="40%"
             fill="#8884d8"
             paddingAngle={2}
             dataKey="value"
-            labelLine={false}
-          >
+            nameKey="name"
+            labelLine={false}>
             {taskStatusData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
         </PieChart>
-      </ResponsiveContainer>
-      <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4 text-sm font-sans">
+      </ChartContainer>
+    </CardContent >
+    <CardFooter className="mt-4">
+      <Stack row gap="gap-x-4 gap-y-2" justify="justify-center" className="flex-wrap text-sm font-sans">
         {taskStatusData.map((item) => (
           <Stack row align="center" key={item.name}>
             <span className="w-2.5 h-2.5 rounded-full mr-2" style={{ backgroundColor: item.color }} aria-hidden="true"></span>
             <span className="text-title font-sans">{item.name}: {item.value}</span>
           </Stack>
         ))}
-      </div>
-    </div>
-  </Card>
+      </Stack>
+    </CardFooter>
+
+  </Card >
 );
 
 const TeamWorkloadChart = () => (
-  <Card title="Team Workload">
-    <ResponsiveContainer width="100%" height={200}>
-      <BarChart data={teamWorkloadData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-        <XAxis dataKey="name" tick={{ fill: '#64748b' }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fill: '#64748b' }} axisLine={false} tickLine={false} />
-        <Tooltip wrapperClassName="!rounded-lg !border-slate-200 !shadow-sm" />
-        <Bar dataKey="tasks" fill="#a78bfa" radius={[4, 4, 0, 0]} />
-      </BarChart>
-    </ResponsiveContainer>
+  <Card>
+    <CardTitle>
+      Team Workload
+    </CardTitle>
+    <CardContent>
+      <div className="w-full" style={{ height: 320 }}>
+        <ChartContainer config={lineChartConfig} className="w-full h-full">
+          <BarChart data={teamWorkloadData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <XAxis dataKey="name" tick={{ fill: '#64748b' }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fill: '#64748b' }} axisLine={false} tickLine={false} />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel={false} />}
+            />
+            <Bar dataKey="tasks" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ChartContainer>
+      </div>
+    </CardContent>
   </Card>
 );
 
 const RecentActivity = () => (
-  <Card title="Recent Activity">
-    <div className="space-y-4 font-sans">
-      {recentActivityData.map((activity, index) => (
-        <div key={index} className="flex items-start">
-          <div className={`mt-1 mr-3 ${activity.color}`}>
-            <Icon name={activity.icon} className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-sm text-title font-sans">{activity.text}</p>
-            <p className="text-xs text-normal font-sans">{activity.time}</p>
-          </div>
-        </div>
-      ))}
-    </div>
+  <Card>
+    <CardTitle>
+      Recent Activity
+    </CardTitle>
+    <CardContent>
+      <div className="space-y-4 font-sans">
+        {recentActivityData.map((activity, index) => (
+          <Stack row align="start" key={index}>
+            <div className={`mt-1 mr-3 ${activity.color}`}>
+              <Icon name={activity.icon} className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm text-title font-sans">{activity.text}</p>
+              <p className="text-xs text-normal font-sans">{activity.time}</p>
+            </div>
+          </Stack>
+        ))}
+      </div>
+    </CardContent>
   </Card>
 );
 
@@ -206,11 +274,11 @@ const RecentActivity = () => (
 const ChartTask = () => {
   return (
     <div className="min-h-screen app-background text-title font-sans">
-      <header className="app-background shadow-sm">
+      <header className="app-background">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <Stack row align="center" justify="justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-title font-sans">Payment Gateway Integration</h1>
+              <H1>Payment Gateway Integration</H1>
               <p className="text-normal mt-1 font-sans text-lg">
                 Modernizing payment processing infrastructure for improved reliability and performance
               </p>
@@ -227,11 +295,11 @@ const ChartTask = () => {
           {kpiData.map(item => <KpiCard key={item.title} item={item} />)}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
-          <section className="lg:col-span-3" aria-labelledby="sprint-burndown-title">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mt-6 auto-rows-fr">
+          <section className="lg:col-span-3 h-full" aria-labelledby="sprint-burndown-title">
             <SprintBurndownChart />
           </section>
-          <section className="lg:col-span-2" aria-labelledby="task-status-title">
+          <section className="lg:col-span-2 h-full" aria-labelledby="task-status-title">
             <TaskStatusChart />
           </section>
         </div>

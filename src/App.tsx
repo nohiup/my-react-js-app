@@ -7,20 +7,20 @@ import { tasks, users } from '../constants';
 import type { Task } from '../types.ts';
 import './App.css';
 import './index.css';
-import { useLeftSidebar } from './hooks/useLeftSidebar.ts';
 import { useHeaderTab } from './hooks/useHeaderTab.ts';
 import RightSidebarToggles from './components/items/RightSideBarToggles.tsx';
 import { useRightSidebar } from './hooks/useRightSidebar.ts';
 import RightSidebar from './components/RightSidebar/index.tsx';
+import { cn } from './lib/utils.ts';
+import classes from './lib/classes.ts';
+import { Stack } from './components/ui/stack.tsx';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from './store/configureStore.ts';
 
 const App: React.FC = () => {
-  const [allTasks, setAllTasks] = useState<Task[]>(tasks);
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
+  const [, setAllTasks] = useState<Task[]>(tasks);
 
-  const handlePaletteClick = () => {
-    setIsDarkMode(prev => !prev);
-  };
-
+  const isDarkMode = useSelector((state: RootState) => state.leftSidebar.isDarkMode);
   React.useEffect(() => {
     const root = document.documentElement;
     if (isDarkMode) {
@@ -30,42 +30,19 @@ const App: React.FC = () => {
     }
   }, [isDarkMode]);
 
-  const {
-    isSidebarOpen,
-    toggleSidebar,
-    nowTasks,
-    pinnedTasks,
-    inboxTasks
-  } = useLeftSidebar({ initialTasks: tasks });
-
 
   const tabs = useHeaderTab({ allTasks: tasks });
-
-  const handleTaskSelect = (taskId: string) => {
-    const task = allTasks.find(t => t.id === taskId);
-    if (!task) return;
-    tabs.openTab(task);
-  };
-
-  const handleTaskUpdate = (updatedTask: Task) => {
-    setAllTasks(prevTasks =>
-      prevTasks.map(task => task.id === updatedTask.id ? updatedTask : task)
-    );
-
-    // cập nhật luôn selectedTask
-    if (tabs.selectedTask?.id === updatedTask.id) {
-      tabs.updateTask(updatedTask); // giả sử bạn có setter
-    }
-  };
   const rightSidebar = useRightSidebar();
-
   return (
-    <div className="flex flex-col h-screen font-sans text-title app-background">
+    <Stack gap="gap-0" className="h-screen font-sans text-title app-background">
       <div className="flex flex-1 overflow-hidden">
-        <LeftSidebar onTaskSelect={handleTaskSelect} selectedTaskId={tabs.selectedTask?.id} isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} nowTasks={nowTasks} pinnedTasks={pinnedTasks} inboxTasks={inboxTasks} onPalleteClick={handlePaletteClick} />
+        <LeftSidebar />
         <main className="flex-1 flex flex-col min-w-40 bg-[#f7f8fa]">
-          <Header activeTabs={tabs.activeTabs} selectedTabId={tabs.selectedTask?.id} onTabSelect={tabs.selectTab} onTabClose={tabs.closeTab} isSidebarOpen={isSidebarOpen} onSidebarToggle={toggleSidebar} />
-          {tabs.selectedTask ? <MainContent task={tabs.selectedTask} users={users} onTaskUpdate={handleTaskUpdate} /> : <div className="flex-1 flex items-center justify-center text-slate-500">Select a task to view details</div>}
+          <Header activeTabs={tabs.activeTabs} selectedTabId={tabs.selectedTask?.id} />
+          {tabs.selectedTask ?
+            <MainContent users={users} />
+            :
+            <div className={cn(classes.itemCentralize, "flex-1 text-slate-500")}>Select a task to view details</div>}
         </main>
 
         <RightSidebar task={tabs.selectedTask!} view={rightSidebar.activeView!} isOpen={rightSidebar.isOpen} />
@@ -76,7 +53,7 @@ const App: React.FC = () => {
         />
       </div>
       <Footer />
-    </div>
+    </Stack>
   );
 };
 

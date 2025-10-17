@@ -1,44 +1,37 @@
-import React from "react";
-import type { Task } from "../../types";
+import React, { useEffect } from "react";
 import NavIcon from "./items/NavIcon";
 import NavBottomIcon from "./items/NavBottomIcons";
 import { ICONS, DIMENS } from "../../constants";
 import TaskGroup from "./containers/TaskGroup";
 import { motion } from "framer-motion";
 import { Stack } from "./ui/stack";
+import { TerminalDialog } from "./items/TerminalDialog";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/configureStore";
+import { toggleDarkMode, toggleSidebar } from "@/store/LeftSidebar/leftSidebarSlice";
+import { fetchLeftSidebarTask } from "@/store/LeftSidebar/leftSidebarTaskSlice";
 
-interface LeftSidebarUIProps {
-    isSidebarOpen: boolean;
-    toggleSidebar: () => void;
-    selectedTaskId?: string;
-    onTaskSelect: (id: string) => void;
-    nowTasks: Task[];
-    pinnedTasks: Task[];
-    inboxTasks: Task[];
-    onPalleteClick: () => void;
-}
 
-const LeftSidebarUI: React.FC<LeftSidebarUIProps> = ({
-    isSidebarOpen,
-    toggleSidebar,
-    selectedTaskId,
-    onTaskSelect,
-    nowTasks,
-    pinnedTasks,
-    inboxTasks,
-    onPalleteClick,
+const LeftSidebarUI: React.FC = ({
 }) => {
+    const dispatch = useDispatch<AppDispatch>();
+    const { data, loading } = useSelector((state: RootState) => state.leftSidebarTask);
+    const isLeftSidebarOpen = useSelector((state: RootState) => state.leftSidebar.isOpen)
+    useEffect(() => {
+        dispatch(fetchLeftSidebarTask());
+    }, [dispatch]);
+
+    if (loading) return <p>Loading tasks...</p>;
+    var allTasks = data;
+    if (allTasks === null) allTasks = [];
+
+    const nowTasks = allTasks.filter(t => ['PAY-234', 'BUG-007', 'FEA-112', 'DEV-404'].includes(t.id));
+    const pinnedTasks = allTasks.filter(t => ['PIN-001', 'PIN-002'].includes(t.id));
+    const inboxTasks = allTasks.filter(t => ['DES-101', 'DES-102', 'DOC-001'].includes(t.id));
+
     return (
-        <motion.aside
-            animate={{
-                width: isSidebarOpen ? "300px" : "0px",
-                opacity: isSidebarOpen ? 1 : 0,
-            }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="app-background border-r border-primary flex overflow-hidden"
-            style={{ flexShrink: 0 }}
-        >
-            {/* Khi width = 0, nội dung vẫn render nhưng bị clip lại */}
+        //Icon left col
+        <Stack row gap="gap-0">
             <Stack align="center" className="w-11 app-background border-r border-primary">
                 <div className="w-11 h-11 p-2 border-b border-primary">
                     <div className="text-primary rounded flex items-center justify-center font-bold text-normal border border-primary">
@@ -48,53 +41,63 @@ const LeftSidebarUI: React.FC<LeftSidebarUIProps> = ({
 
                 <nav>
                     <Stack align="center" gap="gap-3" margin="mt-3">
-                        <NavIcon icon={ICONS.home} active />
-                        <NavIcon icon={ICONS.building} />
-                        <NavIcon icon={ICONS.shield} />
-                        <NavIcon icon={ICONS.sliders} />
+                        <NavIcon icon={ICONS.home} id="0" />
+                        <NavIcon icon={ICONS.building} id="1" />
+                        <NavIcon icon={ICONS.shield} id="2" />
+                        <NavIcon icon={ICONS.sliders} id="3" />
                     </Stack>
                 </nav>
 
                 <div className="flex-grow"></div>
 
                 <Stack align="center" gap="gap-3">
-                    <NavBottomIcon icon={ICONS.command} />
-                    <NavBottomIcon icon={ICONS.palette} onClick={onPalleteClick} />
+                    <TerminalDialog icon={ICONS.command} />
+                    <NavBottomIcon icon={ICONS.palette} onClick={() => dispatch(toggleDarkMode())} />
                     <NavBottomIcon icon={ICONS.helpCircle} />
                     <NavBottomIcon icon={ICONS.user} />
                 </Stack>
             </Stack>
 
-            <Stack className="w-64 app-background">
-                <Stack row align="center" justify="justify-between" padding="px-3" className={`${DIMENS.headerHeight} border-b border-primary`}>
-                    <h3 className="font-bold text-lg text-primary">PM Hub</h3>
-                    <button
-                        onClick={toggleSidebar}
-                        className="w-8 h-8 flex items-center justify-center app-background rounded-md text-title background-primary-hover">
-                        {React.cloneElement(ICONS.sidebar, { className: "w-4 h-4" })}
-                    </button>
-                </Stack>
+            <motion.aside
+                animate={{
+                    width: isLeftSidebarOpen ? "256px" : "0px",
+                    opacity: isLeftSidebarOpen ? 1 : 0,
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="app-background border-r border-primary flex overflow-hidden"
+                style={{ flexShrink: 0 }}>
 
-                <div className="m-3 border-b app-background">
-                    <div className="relative">
-                        <span className="absolute inset-y-0 left-0 pl-2 flex items-center text-normal">
-                            {React.cloneElement(ICONS.search, { className: "w-4 h-4" })}
-                        </span>
-                        <input
-                            type="text"
-                            placeholder="FILTER..."
-                            className="w-full pl-9 pr-3 py-1.5 text-sm app-background border border-primary rounded-md focus:outline-none focus:border-primary tracking-wider"
-                        />
+                <Stack className="w-64 app-background">
+                    <Stack row align="center" justify="justify-between" padding="px-3" className={`${DIMENS.headerHeight} border-b border-primary`}>
+                        <h3 className="font-bold text-lg text-primary">PM Hub</h3>
+                        <button
+                            onClick={() => dispatch(toggleSidebar("none"))}
+                            className="w-8 h-8 flex items-center justify-center app-background rounded-md text-title background-primary-hover">
+                            {React.cloneElement(ICONS.sidebar, { className: "w-4 h-4" })}
+                        </button>
+                    </Stack>
+
+                    <div className="m-3 border-b app-background">
+                        <div className="relative">
+                            <span className="absolute inset-y-0 left-0 pl-2 flex items-center text-normal">
+                                {React.cloneElement(ICONS.search, { className: "w-4 h-4" })}
+                            </span>
+                            <input
+                                type="text"
+                                placeholder="FILTER..."
+                                className="w-full pl-9 pr-3 py-1.5 text-sm app-background border border-primary rounded-md focus:outline-none focus:border-primary tracking-wider"
+                            />
+                        </div>
                     </div>
-                </div>
 
-                <Stack padding="pr-1" className="flex-1 overflow-y-auto">
-                    <TaskGroup title="Now" tasks={nowTasks} onTaskSelect={onTaskSelect} selectedTaskId={selectedTaskId} />
-                    <TaskGroup title="Pinned" tasks={pinnedTasks} onTaskSelect={onTaskSelect} selectedTaskId={selectedTaskId} />
-                    <TaskGroup title="Inbox" tasks={inboxTasks} onTaskSelect={onTaskSelect} selectedTaskId={selectedTaskId} badgeCount={3} />
+                    <Stack padding="pr-1" className="flex-1 overflow-y-auto">
+                        <TaskGroup title="Now" tasks={nowTasks} />
+                        <TaskGroup title="Pinned" tasks={pinnedTasks} />
+                        <TaskGroup title="Inbox" tasks={inboxTasks} badgeCount={3} />
+                    </Stack>
                 </Stack>
-            </Stack>
-        </motion.aside>
+            </motion.aside>
+        </Stack>
     );
 };
 

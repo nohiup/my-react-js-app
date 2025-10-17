@@ -1,17 +1,54 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { Task, User } from '../../types';
 import TaskDetails from './TaskDetails';
 import ChartTask from './containers/ChartTask';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '@/store/configureStore';
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from './ui/empty';
+import { Button } from './ui/button';
+import { Spinner } from './ui/spinner';
+import { fetchMainContentTask, updateTask } from '@/store/MainContent/mainContentSlice';
 
 interface MainContentProps {
-  task: Task;
   users: User[];
-  onTaskUpdate: (task: Task) => void;
 }
 
-const MainContent: React.FC<MainContentProps> = ({ task, users, onTaskUpdate }) => {
-  if (task.id === 'PIN-001') {
+const MainContent: React.FC<MainContentProps> = ({ users }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const selectedTaskId = useSelector((state: RootState) => state.leftSidebarTask.selectedTaskId)
+  const { task, loading } = useSelector((state: RootState) => state.mainContent);
+  useEffect(() => {
+    if (selectedTaskId === null || selectedTaskId === "") return;
+    dispatch(fetchMainContentTask(selectedTaskId))
+  }, [selectedTaskId]);
+
+  if (selectedTaskId === null || selectedTaskId === "") {
+    return (<p className="justify-center">Select a task to view</p>)
+  }
+  if (loading) {
+    return (
+      <Empty className="w-full">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Spinner />
+          </EmptyMedia>
+          <EmptyTitle>Processing your request</EmptyTitle>
+          <EmptyDescription>
+            Please wait while we process your request. Do not refresh the page.
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <Button variant="outline" size="sm">
+            Cancel
+          </Button>
+        </EmptyContent>
+      </Empty>
+    )
+  }
+  if (task === null) {
+    return (<p> Null content</p>);
+  }
+  if (selectedTaskId === 'PIN-001') {
     return (
       <div className="flex-1 overflow-y-auto p-6 lg:p-8 app-background text-normal">
         <ChartTask></ChartTask>
@@ -20,9 +57,8 @@ const MainContent: React.FC<MainContentProps> = ({ task, users, onTaskUpdate }) 
   }
   return (
     <div className="flex-1 overflow-y-auto p-6 lg:p-8 app-background text-normal">
-      <TaskDetails task={task} users={users} onTaskUpdate={onTaskUpdate} />
-    </div>
-  );
+      <TaskDetails task={task} users={users} onTaskUpdate={(updatedTask) => dispatch(updateTask(updatedTask))} />
+    </div>);
 };
 
 export default MainContent;

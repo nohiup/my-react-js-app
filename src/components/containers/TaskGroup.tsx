@@ -3,17 +3,20 @@ import type { Task } from "../../../types";
 import TaskListItem from "../items/TaskListItem";
 import { ICONS } from "../../../constants";
 import { Stack } from "../ui/stack";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store/configureStore";
+import { setSelectedTaskId } from "@/store/LeftSidebar/leftSidebarTaskSlice";
+import { openNewTask } from "@/store/Header/headerTabSlice";
 
 const TaskGroup: React.FC<{
   title: string;
   tasks: Task[];
-  onTaskSelect: (id: string) => void;
-  selectedTaskId?: string;
   defaultOpen?: boolean;
   badgeCount?: number;
-}> = ({ title, tasks, onTaskSelect, selectedTaskId, defaultOpen = true, badgeCount }) => {
+}> = ({ title, tasks, defaultOpen = true, badgeCount }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-
+  const dispatch = useDispatch<AppDispatch>();
+  const selectedId = useSelector((state: RootState) => state.leftSidebarTask.selectedTaskId);
   return (
     <div>
       <Stack row align="center" padding="pl-2 pr-5 py-1" justify="justify-between"
@@ -40,7 +43,18 @@ const TaskGroup: React.FC<{
           <div className="pt-2 px-4 space-y-1">
             {tasks.map(task => {
               let dotColor = 'bg-yellow-400'; if (task.id.startsWith('BUG')) dotColor = 'bg-red-400'; if (task.id.startsWith('FEA')) dotColor = 'bg-green-400';
-              return (<TaskListItem key={task.id} task={task} onSelect={() => onTaskSelect(task.id)} isSelected={task.id === selectedTaskId} icon=<span className={`block w-2 h-2 rounded-full ml-2 flex-shrink-0 ${dotColor}`} /> iconColor="text-transparent" />)
+              return (
+                <TaskListItem
+                  key={task.id}
+                  task={task}
+                  onSelect={() => {
+                    dispatch(setSelectedTaskId(task.id))
+                    dispatch(openNewTask(task))
+                  }
+                  }
+                  isSelected={task.id === selectedId}
+                  icon=<span className={`block w-2 h-2 rounded-full ml-2 flex-shrink-0 ${dotColor}`} /> iconColor="text-transparent"
+                />)
             })}
           </div>
         )

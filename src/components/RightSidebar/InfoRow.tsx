@@ -10,7 +10,7 @@ const InfoRow: React.FC<{
   React.ReactNode;
 }> = ({ icon, label, children }) => (
   <Stack gap="gap-0">
-    <Stack row align="center" className="space-x-2 text-normal">
+    <Stack row align="center" className="text-normal">
       <span className="w-4 h-4 flex items-center justify-center">
         {React.cloneElement(icon, { className: "w-4 h-4 shrink-0" })}
       </span>

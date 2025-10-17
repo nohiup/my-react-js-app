@@ -4,6 +4,9 @@ import { ICONS } from '../../constants';
 import { TaskStatus, TaskPriority } from '../../types';
 import { Stack } from './ui/stack';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardTitle } from './ui/card';
+import { H1 } from './ui/headings';
+import classes from '@/lib/classes';
 
 interface TaskDetailsProps {
     task: Task;
@@ -61,15 +64,15 @@ const ChecklistItemComponent: React.FC<{ item: ChecklistItem; onToggle: (id: str
 
 const CommentComponent: React.FC<{ user: User | undefined; text: string; timestamp: string; }> = ({ user, text, timestamp }) => (
     <Stack row gap="gap-3" align="start">
-        <div className="w-8 h-8 rounded-full app-background flex items-center justify-center font-bold text-slate-500 text-sm flex-shrink-0">
+        <div className={cn(classes.squareContainer(8), classes.itemCentralize, classes.textContent, "rounded-full app-background font-bold flex-shrink-0")}>
             {user?.avatar}
         </div>
         <div className="flex-1">
             <Stack row align="center">
                 <span className="font-semibold text-sm">{user?.name}</span>
-                <span className="text-xs text-normal">{timestamp}</span>
+                <span className={classes.textNormalDescription}>{timestamp}</span>
             </Stack>
-            <p className="text-sm text-normal mt-1">{text}</p>
+            <p className={cn(classes.textContent, "mt-1")}>{text}</p>
         </div>
     </Stack>
 );
@@ -88,7 +91,8 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) 
 
     const assigneeValue = (
         <Stack row align="center">
-            <div className="w-6 h-6 rounded-full app-background flex items-center justify-center font-bold text-normal text-xs">
+            {/* <div className="w-6 h-6 rounded-full app-background flex items-center justify-center font-bold"> */}
+            <div className={cn(classes.squareContainer(6), classes.itemCentralize, classes.textContent, "rounded-full app-background font-bold")}>
                 {assignee?.avatar}
             </div>
             <span className="font-medium">{assignee?.name || 'Unassigned'}</span>
@@ -99,11 +103,11 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) 
         <div className="max-w-4xl mx-auto">
             <header className="mb-6">
                 <Stack row gap="gap-3" align="center" margin="mb-2">
-                    <span className="text-sm font-medium text-normal">{task.id}</span>
+                    <span className={cn(classes.textContent, "font-medium")}>{task.id}</span>
                     <PriorityTag priority={task.priority} />
                     <StatusTag status={task.status} />
                 </Stack>
-                <h1 className="text-3xl font-bold text-title">{task.title}</h1>
+                <H1>{task.title}</H1>
                 <p className="text-normal mt-1">{task.shortDescription}</p>
             </header>
 
@@ -125,72 +129,82 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) 
             </section>
 
             <div className="space-y-8">
-                <div className="p-5 app-background border border-primary rounded-lg shadow-sm">
-                    <h3 className="font-semibold text-lg mb-3">Description</h3>
-                    <div className="text-title space-y-4 text-sm">
-                        <p>{task.description}</p>
-                        <div>
-                            <h4 className="font-semibold mb-2">Requirements:</h4>
-                            <ul className="list-disc list-inside space-y-1">
-                                {task.requirements.map((req, i) => <li key={i}>{req}</li>)}
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold mb-2">Technical Notes:</h4>
-                            <p>{task.technicalNotes}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="p-5 app-background border border-primary rounded-lg shadow-sm">
-                    <h3 className="font-semibold text-lg mb-4">Checklist</h3>
-                    <div className="space-y-3">
-                        {task.checklist.map(item => <ChecklistItemComponent key={item.id} item={item} onToggle={handleChecklistToggle} />)}
-                    </div>
-                </div>
-
-                <div className="p-5 app-background border border-primary rounded-lg shadow-sm">
-                    <h3 className="font-semibold text-lg mb-4 flex items-center space-x-2">
-                        {/* Fix: Removed unnecessary and problematic `as React.ReactElement` cast. */}
-                        {React.cloneElement(ICONS.messageSquare, { className: "w-5 h-5 text-normal" })}
-                        <span>Comments</span>
-                    </h3>
-                    <div className="space-y-6">
-                        {task.comments.map(comment => (
-                            <CommentComponent
-                                key={comment.id}
-                                user={users.find(u => u.id === comment.userId)}
-                                text={comment.text}
-                                timestamp={comment.timestamp}
-                            />
-                        ))}
-                    </div>
-                    <div className="mt-6 pt-6 border-t border-primary">
-                        <Stack row gap="gap-3" align="center">
-                            <div className="w-8 h-8 rounded-full app-background flex items-center justify-center font-bold text-normal text-sm flex-shrink-0">
-                                JD
+                <Card className="app-background border border-primary rounded-lg">
+                    <CardTitle className="font-semibold text-lg">
+                        Description
+                    </CardTitle>
+                    <CardContent className="pl-0">
+                        <div className="text-title space-y-4 text-sm">
+                            <p>{task.description}</p>
+                            <div>
+                                <h4 className="font-semibold">Requirements:</h4>
+                                <ul className="list-disc list-inside space-y-1">
+                                    {task.requirements.map((req, i) => <li key={i}>{req}</li>)}
+                                </ul>
                             </div>
-                            <div className="flex-1">
-                                <div className="border border-primary rounded-lg focus-within:border-primary focus-within:ring-1">
-                                    <textarea
-                                        placeholder="Add a comment..."
-                                        className="w-full p-2 text-sm text-title bg-transparent rounded-t-lg focus:outline-none resize-none"
-                                        rows={3}
-                                    ></textarea>
-                                    <div className="flex justify-between items-center p-2 border-t border-primary app-background">
-                                        <Stack row align="center">
-                                            <button className="p-1.5 text-normal background-primary-hover rounded-md">
-                                                {/* Fix: Removed unnecessary and problematic `as React.ReactElement` cast. */}
-                                                {React.cloneElement(ICONS.paperclip, { className: "w-4 h-4" })}
-                                            </button>
-                                        </Stack>
-                                        <button className="px-4 py-1.5 background-primary text-contrast text-sm font-semibold rounded-md background-primary-hover disabled:opacity-50 cursor-not-allowed">Comment</button>
-                                    </div>
-                                </div>
+                            <div>
+                                <h4 className="font-semibold mb-2">Technical Notes:</h4>
+                                <p>{task.technicalNotes}</p>
                             </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="app-background border border-primary rounded-lg">
+                    <CardTitle className="font-semibold text-lg">
+                        Checklist
+                    </CardTitle>
+                    <CardContent className="pl-0">
+                        <div className="space-y-3">
+                            {task.checklist.map(item => <ChecklistItemComponent key={item.id} item={item} onToggle={handleChecklistToggle} />)}
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="app-background border border-primary rounded-lg">
+                    <CardTitle className="font-semibold text-lg">
+                        <Stack row align="center">
+                            {React.cloneElement(ICONS.messageSquare, { className: cn(classes.squareContainer(5), "text-medium") })}
+                            <span>Comments</span>
                         </Stack>
-                    </div>
-                </div>
+                    </CardTitle>
+                    <CardContent className="pl-0">
+                        <div className="space-y-6">
+                            {task.comments.map(comment => (
+                                <CommentComponent
+                                    key={comment.id}
+                                    user={users.find(u => u.id === comment.userId)}
+                                    text={comment.text}
+                                    timestamp={comment.timestamp}
+                                />
+                            ))}
+                        </div>
+                        <div className="mt-6 pt-6 border-t border-primary">
+                            <Stack row gap="gap-3" align="center">
+                                <div className={cn(classes.squareContainer(8), classes.itemCentralize, classes.textContent, "rounded-full font-bold flex-shrink-0")}>
+                                    JD
+                                </div>
+                                <div className="flex-1">
+                                    <Stack className="border border-primary rounded-xl focus-within:border-primary focus-within:ring-1 p-2">
+                                        <textarea
+                                            placeholder="Add a comment..."
+                                            className="w-full p-2 text-sm text-title bg-transparent focus:outline-none resize-none"
+                                            rows={3}
+                                        ></textarea>
+                                        <div className="flex justify-between items-center app-background border-t border-primary p-1">
+                                            <Stack row align="center">
+                                                <button className="p-1.5 text-normal background-primary-hover rounded-md">
+                                                    {React.cloneElement(ICONS.paperclip, { className: "w-4 h-4" })}
+                                                </button>
+                                            </Stack>
+                                            <button className="px-4 py-1.5 background-primary text-contrast text-sm font-semibold rounded-md background-primary-hover disabled:opacity-50 cursor-not-allowed">Comment</button>
+                                        </div>
+                                    </Stack>
+                                </div>
+                            </Stack>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div >
     );
