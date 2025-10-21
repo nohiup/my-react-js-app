@@ -6,21 +6,28 @@ import { Stack } from '../ui/stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActive, toggleSidebar } from '@/store/LeftSidebar/leftSidebarSlice';
 import type { AppDispatch, RootState } from '@/store/configureStore';
+import { useNavigate } from "react-router";
+
 type NavIconProps = {
   icon: React.ReactElement<{ className?: string }>;
-  id: string
+  id: string;
+  path?: string;
 };
 
 
-const NavIcon = ({ icon, id }: NavIconProps) => {
+const NavIcon = ({ icon, id, path }: NavIconProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   var active = true;
   const handleClick = () => {
     dispatch(toggleSidebar(id));
     dispatch(setActive(id));
+    if (path) {
+      navigate(path);
+    }
   };
-  const activeId = useSelector((state: RootState) => state.leftSidebar.activeId);
-  if (id !== activeId) {
+  const activeTab = useSelector((state: RootState) => state.leftSidebar.activeTab);
+  if (id !== activeTab) {
     active = false;
   }
   return (

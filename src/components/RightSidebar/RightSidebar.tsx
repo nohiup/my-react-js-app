@@ -8,6 +8,10 @@ import Tag from "./Tag";
 import type { Task } from "../../../types";
 import type { RightSidebarView } from "../../hooks/useRightSidebar";
 import { Stack } from "../ui/stack";
+import type { RootState } from "@/store/configureStore";
+import { useSelector } from "react-redux";
+import { projectTasks, securityTasks, settingsTasks, tasks } from "@/data/tasks";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "../ui/empty";
 
 interface RightSidebarProps {
   task: Task;
@@ -15,13 +19,25 @@ interface RightSidebarProps {
   isOpen: boolean;
 }
 
-const RightSidebar: React.FC<RightSidebarProps> = ({ task, view, isOpen }) => {
+const RightSidebar: React.FC<RightSidebarProps> = ({ view, isOpen }) => {
   const [activeConversationId, setActiveConversationId] = useState(initialConversations[0].id);
   const [messages, setMessages] = useState(initialMessages);
   const [currentMessage, setCurrentMessage] = useState("");
 
   const activeConversation = initialConversations.find((c) => c.id === activeConversationId);
   const activeMessages = messages[activeConversationId] || [];
+  const taskId = useSelector((state: RootState) => state.leftSidebarTask.selectedTaskId)
+  const combinedTasks = [] as Task[];
+  combinedTasks.push(...tasks);
+  combinedTasks.push(...projectTasks);
+  combinedTasks.push(...securityTasks);
+  combinedTasks.push(...settingsTasks);
+
+  const filteredTasks = combinedTasks.filter((t) => t.id === taskId);
+  var task = null;
+  if (filteredTasks != null) {
+    task = filteredTasks[0];
+  }
 
   const handleSendMessage = () => {
     if (!currentMessage.trim()) return;
@@ -56,23 +72,35 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ task, view, isOpen }) => {
       </Stack>
 
       {view === "info" ? (
-        <Stack gap="gap-5" padding="px-4 pt-4">
-          <h3 className="font-semibold text-base text-title">{task.title}</h3>
-          <p className="text-xs text-normal">Task • ID: {`tab:${task.id}.toLowerCase()`}</p>
-          <div className="space-y-4">
-            <InfoRow icon={ICONS.user} label="Assignee"><span>John Doe</span></InfoRow>
-            <InfoRow icon={ICONS.calendar} label="Timeline"><span>{task.timeline.start} → {task.timeline.end}</span></InfoRow>
-            <InfoRow icon={ICONS.clock} label="Status"><span>{task.status}</span></InfoRow>
-            <InfoRow icon={ICONS.tag} label="Tags">
-              <Stack row padding="pt-1" className="flex-wrap">
-                {task.tags.map(tag => <Tag key={tag} text={tag} />)}
-              </Stack>
-            </InfoRow>
-            <InfoRow icon={ICONS.sprint} label="Sprint"><span>{task.sprint} • {task.sprintPoints} points</span></InfoRow>
-          </div>
-        </Stack>
+        task ?
+          <Stack gap="gap-5" padding="px-4 pt-4">
+            <h3 className="font-semibold text-base text-title">{task.title}</h3>
+            <p className="text-xs text-normal">Task • ID: {`tab:${task.id.toLocaleLowerCase()}`}</p>
+            <div className="space-y-4">
+              <InfoRow icon={ICONS.user} label="Assignee"><span>John Doe</span></InfoRow>
+              <InfoRow icon={ICONS.calendar} label="Timeline"><span>{task.timeline.start} → {task.timeline.end}</span></InfoRow>
+              <InfoRow icon={ICONS.clock} label="Status"><span>{task.status}</span></InfoRow>
+              <InfoRow icon={ICONS.tag} label="Tags">
+                <Stack row padding="pt-1" className="flex-wrap">
+                  {task.tags.map(tag => <Tag key={tag} text={tag} />)}
+                </Stack>
+              </InfoRow>
+              <InfoRow icon={ICONS.sprint} label="Sprint"><span>{task.sprint} • {task.sprintPoints} points</span></InfoRow>
+            </div>
+          </Stack>
+          : <Empty className="border border-dashed app-background">
+            <EmptyHeader className="text-constrast">
+              <EmptyTitle>No task selected</EmptyTitle>
+              <EmptyDescription className="text-constrast">
+                Select a task to view details
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+
+            </EmptyContent>
+          </Empty>
       ) : (
-        <Stack row className="flex flex-1 overflow-hidden">
+        <Stack row className="flex flex-1 overflow-hidden" gap="gap-0">
           <Sidebar
             conversations={initialConversations}
             activeConversationId={activeConversationId}

@@ -8,6 +8,7 @@ import type { AppDispatch, RootState } from '@/store/configureStore.ts';
 import { toggleSidebar } from '@/store/LeftSidebar/leftSidebarSlice.ts';
 import { closeTask } from '@/store/Header/headerTabSlice.ts';
 import { setSelectedTaskId } from '@/store/LeftSidebar/leftSidebarTaskSlice.ts';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   activeTabs: Task[];
@@ -39,6 +40,8 @@ const Header: React.FC<HeaderProps> = () => {
   const isLeftSidebarOpen = useSelector((state: RootState) => state.leftSidebar.isOpen)
   const dispatch = useDispatch<AppDispatch>();
   const selectedTabTaskId = useSelector((state: RootState) => state.leftSidebarTask.selectedTaskId)
+  const navigate = useNavigate();
+  const active = useSelector((state: RootState) => state.leftSidebar.activeTab);
   const activeTabs = useSelector((state: RootState) => state.headerTab.openedTabTasks);
   return (
     <header className="flex-shrink-0 h-11 app-background border-b border-primary flex items-center justify-between px-2">
@@ -58,7 +61,11 @@ const Header: React.FC<HeaderProps> = () => {
                 key={tab.id}
                 task={tab}
                 isActive={tab.id === selectedTabTaskId}
-                onSelect={() => dispatch(setSelectedTaskId(tab.id))}
+                onSelect={() => {
+                  dispatch(setSelectedTaskId(tab.id));
+                  navigate(`/${active.toString()}/${tab.id}`);
+                }
+                }
                 onClose={(e) => {
                   e.stopPropagation();
                   dispatch(closeTask(tab.id));
@@ -72,6 +79,7 @@ const Header: React.FC<HeaderProps> = () => {
                       dispatch(setSelectedTaskId(null));
                     }
                   }
+                  navigate(`/${active.toString()}/${tab.id}`);
                 }}
               />
             </div>

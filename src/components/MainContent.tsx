@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import type { Task, User } from '../../types';
+import type { User } from '../../types';
 import TaskDetails from './TaskDetails';
 import ChartTask from './containers/ChartTask';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,13 +23,23 @@ const MainContent: React.FC<MainContentProps> = ({ users }) => {
   }, [selectedTaskId]);
 
   if (selectedTaskId === null || selectedTaskId === "") {
-    return (<p className="justify-center">Select a task to view</p>)
+    return (<Empty className="border border-dashed app-background">
+      <EmptyHeader className="text-constrast">
+        <EmptyTitle>Content Empty</EmptyTitle>
+        <EmptyDescription className="text-constrast">
+          Empty task content, select a task to view content
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+
+      </EmptyContent>
+    </Empty>)
   }
   if (loading) {
     return (
-      <Empty className="w-full">
+      <Empty className="w-full app-background">
         <EmptyHeader>
-          <EmptyMedia variant="icon">
+          <EmptyMedia variant="icon" className="text-constrast">
             <Spinner />
           </EmptyMedia>
           <EmptyTitle>Processing your request</EmptyTitle>
@@ -46,7 +56,18 @@ const MainContent: React.FC<MainContentProps> = ({ users }) => {
     )
   }
   if (task === null) {
-    return (<p> Null content</p>);
+    return (<Empty className="border border-dashed">
+      <EmptyHeader>
+        <EmptyTitle>Content Empty</EmptyTitle>
+        <EmptyDescription>
+          Empty task content, select a task to view content
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+
+      </EmptyContent>
+    </Empty>
+    );
   }
   if (selectedTaskId === 'PIN-001') {
     return (

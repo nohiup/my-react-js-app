@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardTitle } from './ui/card';
 import { H1 } from './ui/headings';
 import classes from '@/lib/classes';
+import { AnimateProgressBar } from './items/AnimateProgressBar';
 
 interface TaskDetailsProps {
     task: Task;
@@ -91,7 +92,6 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) 
 
     const assigneeValue = (
         <Stack row align="center">
-            {/* <div className="w-6 h-6 rounded-full app-background flex items-center justify-center font-bold"> */}
             <div className={cn(classes.squareContainer(6), classes.itemCentralize, classes.textContent, "rounded-full app-background font-bold")}>
                 {assignee?.avatar}
             </div>
@@ -124,7 +124,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) 
                     <span className="text-sm text-normal">{completedChecklistItems} of {task.checklist.length} completed</span>
                 </Stack>
                 <div className="w-full app-background rounded-full h-2">
-                    <div className="background-primary h-2 rounded-full" style={{ width: `${progressPercentage}%` }}></div>
+                    <AnimateProgressBar progress={progressPercentage}></AnimateProgressBar>
                 </div>
             </section>
 
@@ -168,17 +168,15 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ task, users, onTaskUpdate }) 
                             <span>Comments</span>
                         </Stack>
                     </CardTitle>
-                    <CardContent className="pl-0">
-                        <div className="space-y-6">
-                            {task.comments.map(comment => (
-                                <CommentComponent
-                                    key={comment.id}
-                                    user={users.find(u => u.id === comment.userId)}
-                                    text={comment.text}
-                                    timestamp={comment.timestamp}
-                                />
-                            ))}
-                        </div>
+                    <CardContent className="pl-0 space-y-6">
+                        {task.comments.map(comment => (
+                            <CommentComponent
+                                key={comment.id}
+                                user={users.find(u => u.id === comment.userId)}
+                                text={comment.text}
+                                timestamp={comment.timestamp}
+                            />
+                        ))}
                         <div className="mt-6 pt-6 border-t border-primary">
                             <Stack row gap="gap-3" align="center">
                                 <div className={cn(classes.squareContainer(8), classes.itemCentralize, classes.textContent, "rounded-full font-bold flex-shrink-0")}>

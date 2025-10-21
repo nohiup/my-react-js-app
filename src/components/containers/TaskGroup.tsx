@@ -7,15 +7,20 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store/configureStore";
 import { setSelectedTaskId } from "@/store/LeftSidebar/leftSidebarTaskSlice";
 import { openNewTask } from "@/store/Header/headerTabSlice";
+import { useNavigate } from "react-router-dom";
+import type TabName from "@/data/enum";
 
 const TaskGroup: React.FC<{
   title: string;
+  activeTab: TabName;
   tasks: Task[];
   defaultOpen?: boolean;
   badgeCount?: number;
-}> = ({ title, tasks, defaultOpen = true, badgeCount }) => {
+}> = ({ title, tasks, defaultOpen = true, badgeCount, activeTab: active }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const dispatch = useDispatch<AppDispatch>();
+  const navigator = useNavigate();
+  const basePath = active.toString();
   const selectedId = useSelector((state: RootState) => state.leftSidebarTask.selectedTaskId);
   return (
     <div>
@@ -50,6 +55,7 @@ const TaskGroup: React.FC<{
                   onSelect={() => {
                     dispatch(setSelectedTaskId(task.id))
                     dispatch(openNewTask(task))
+                    navigator(`/${basePath}/${task.id}`)
                   }
                   }
                   isSelected={task.id === selectedId}

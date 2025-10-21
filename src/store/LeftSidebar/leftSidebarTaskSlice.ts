@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { tasks } from "../../data/tasks";
+import { projectTasks, securityTasks, settingsTasks, tasks } from "../../data/tasks";
 import type { Task } from "types";
+import TabName from "@/data/enum";
 
 interface LeftSidebarTaskState {
   data: Task[] | null;
@@ -17,9 +18,25 @@ const initialState: LeftSidebarTaskState = {
 };
 
 
-export const fetchLeftSidebarTask = createAsyncThunk("leftSidebarTask/fetchTasks", async () => {
+export const fetchLeftSidebarTask = createAsyncThunk("leftSidebarTask/fetchTasks", async (activeTab: TabName) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  const res = tasks;
+  var res = [] as Task[];
+  switch (activeTab) {
+    case TabName.Home:
+      res = tasks;
+      break;
+    case TabName.Projects:
+      res = projectTasks;
+      break;
+    case TabName.Security:
+      res = securityTasks;
+      break;
+    case TabName.Settings:
+      res = settingsTasks;
+      break;
+    default:
+      res = tasks;
+  }
   return res;
 });
 

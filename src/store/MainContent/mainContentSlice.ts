@@ -1,4 +1,4 @@
-import { tasks } from "@/data/tasks";
+import { projectTasks, securityTasks, settingsTasks, tasks } from "@/data/tasks";
 import type { Task } from "@/data/type";
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
@@ -18,7 +18,12 @@ const initialState: TaskState = {
 
 export const fetchMainContentTask = createAsyncThunk("mainContent/fetchTask", async (taskId: string) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  const res = tasks.find((t) => t.id === taskId);
+  const combinedTasks = [] as Task[];
+  combinedTasks.push(...tasks);
+  combinedTasks.push(...projectTasks);
+  combinedTasks.push(...securityTasks);
+  combinedTasks.push(...settingsTasks);
+  const res = combinedTasks.find((t) => t.id === taskId);
   return res;
 });
 

@@ -1,9 +1,11 @@
+import TabName from "@/data/enum";
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
   isOpen: true,
-  activeId: "0",
+  activeTab: TabName.None,
   isDarkMode: false,
+
 }
 
 const leftSidebarSlice = createSlice({
@@ -11,7 +13,7 @@ const leftSidebarSlice = createSlice({
   initialState,
   reducers: {
     toggleSidebar: (state, value) => {
-      if (value.payload === state.activeId) {
+      if (value.payload === state.activeTab) {
         state.isOpen = !state.isOpen;
       }
       else if (state.isOpen === false) {
@@ -23,8 +25,8 @@ const leftSidebarSlice = createSlice({
 
     },
     setActive: (state, value) => {
-      if (value.payload !== state.activeId) {
-        state.activeId = value.payload;
+      if (value.payload !== state.activeTab) {
+        state.activeTab = value.payload;
       }
     },
 

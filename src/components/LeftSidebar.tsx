@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store/configureStore";
 import { toggleDarkMode, toggleSidebar } from "@/store/LeftSidebar/leftSidebarSlice";
 import { fetchLeftSidebarTask } from "@/store/LeftSidebar/leftSidebarTaskSlice";
+import { Skeleton } from "./ui/skeleton";
+import TabName from "@/data/enum";
 
 
 const LeftSidebarUI: React.FC = ({
@@ -17,15 +19,15 @@ const LeftSidebarUI: React.FC = ({
     const dispatch = useDispatch<AppDispatch>();
     const { data, loading } = useSelector((state: RootState) => state.leftSidebarTask);
     const isLeftSidebarOpen = useSelector((state: RootState) => state.leftSidebar.isOpen)
+    const activeTab = useSelector((state: RootState) => state.leftSidebar.activeTab);
     useEffect(() => {
-        dispatch(fetchLeftSidebarTask());
-    }, [dispatch]);
+        dispatch(fetchLeftSidebarTask(activeTab));
+    }, [dispatch, activeTab]);
 
-    if (loading) return <p>Loading tasks...</p>;
     var allTasks = data;
     if (allTasks === null) allTasks = [];
 
-    const nowTasks = allTasks.filter(t => ['PAY-234', 'BUG-007', 'FEA-112', 'DEV-404'].includes(t.id));
+    const nowTasks = activeTab === TabName.Home ? allTasks.filter(t => ['PAY-234', 'BUG-007', 'FEA-112', 'DEV-404'].includes(t.id)) : allTasks;
     const pinnedTasks = allTasks.filter(t => ['PIN-001', 'PIN-002'].includes(t.id));
     const inboxTasks = allTasks.filter(t => ['DES-101', 'DES-102', 'DOC-001'].includes(t.id));
 
@@ -41,10 +43,10 @@ const LeftSidebarUI: React.FC = ({
 
                 <nav>
                     <Stack align="center" gap="gap-3" margin="mt-3">
-                        <NavIcon icon={ICONS.home} id="0" />
-                        <NavIcon icon={ICONS.building} id="1" />
-                        <NavIcon icon={ICONS.shield} id="2" />
-                        <NavIcon icon={ICONS.sliders} id="3" />
+                        <NavIcon icon={ICONS.home} id={TabName.Home} path="/home" />
+                        <NavIcon icon={ICONS.building} id={TabName.Projects} path="/projects" />
+                        <NavIcon icon={ICONS.shield} id={TabName.Security} path="/security" />
+                        <NavIcon icon={ICONS.sliders} id={TabName.Settings} path="/settings" />
                     </Stack>
                 </nav>
 
@@ -89,12 +91,23 @@ const LeftSidebarUI: React.FC = ({
                             />
                         </div>
                     </div>
-
-                    <Stack padding="pr-1" className="flex-1 overflow-y-auto">
-                        <TaskGroup title="Now" tasks={nowTasks} />
-                        <TaskGroup title="Pinned" tasks={pinnedTasks} />
-                        <TaskGroup title="Inbox" tasks={inboxTasks} badgeCount={3} />
-                    </Stack>
+                    {loading && (
+                        <Stack align="center" gap="gap-4">
+                            <div className="space-y-4">
+                                <Skeleton className="h-4 w-[200px]" />
+                                <Skeleton className="h-4 w-[200px]" />
+                                <Skeleton className="h-4 w-[200px]" />
+                                <Skeleton className="h-4 w-[200px]" />
+                            </div>
+                        </Stack>
+                    )}
+                    {!loading && (
+                        <Stack padding="pr-1" className="flex-1 overflow-y-auto">
+                            <TaskGroup title="Now" tasks={nowTasks} activeTab={activeTab} />
+                            <TaskGroup title="Pinned" tasks={pinnedTasks} activeTab={activeTab} />
+                            <TaskGroup title="Inbox" tasks={inboxTasks} badgeCount={3} activeTab={activeTab} />
+                        </Stack>
+                    )}
                 </Stack>
             </motion.aside>
         </Stack>
